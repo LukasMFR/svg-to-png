@@ -2,41 +2,48 @@
 
 # Default values for parameters
 default_width=3200
+set_dpi=false
+dpi=600
 
 # Function to display help menu
 show_help() {
-echo "Usage: $0 -f FILENAME [-w WIDTH]"
-echo ""
-echo "Convert SVG to PNG using rsvg-convert."
-echo ""
-echo "   -h, --help           Display this help menu and exit"
-echo "   -f, --file FILENAME  Specify the SVG file to convert"
-echo "   -w, --width WIDTH    Optional: Specify the width (default is 3200)"
-echo ""
+    echo "Usage: $0 -f FILENAME [-w WIDTH] [--set-dpi]"
+    echo ""
+    echo "Convert SVG to PNG using rsvg-convert."
+    echo ""
+    echo "   -h, --help           Display this help menu and exit"
+    echo "   -f, --file FILENAME  Specify the SVG file to convert"
+    echo "   -w, --width WIDTH    Optional: Specify the width (default is $default_width)"
+    echo "   --set-dpi            Optional: Set the DPI to 600 in the PNG file"
+    echo ""
 }
 
 # Parse command-line options
 while [[ $# -gt 0 ]]; do
-case $1 in
-    -h|--help)
-        show_help
-        exit 0
-        ;;
-    -f|--file)
-        filename="${2%.*}"
-        shift # past argument
-        shift # past value
-        ;;
-    -w|--width)
-        width="$2"
-        shift # past argument
-        shift # past value
-        ;;
-    *)    # unknown option
-        show_help >&2
-        exit 1
-        ;;
-esac
+    case $1 in
+        -h|--help)
+            show_help
+            exit 0
+            ;;
+        -f|--file)
+            filename="${2%.*}"
+            shift # past argument
+            shift # past value
+            ;;
+        -w|--width)
+            width="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        --set-dpi)
+            set_dpi=true
+            shift # past argument
+            ;;
+        *)    # unknown option
+            show_help >&2
+            exit 1
+            ;;
+    esac
 done
 
 # Check required file parameter
@@ -59,5 +66,10 @@ fi
 
 # Convert SVG to PNG using rsvg-convert with the specified width
 rsvg-convert -w "$width" "${filename}.svg" > "${filename}.png"
+echo "SVG conversion complete: ${filename}.png"
 
-echo "Conversion complete: ${filename}.png"
+# Optionally set the DPI using ImageMagick
+if $set_dpi; then
+    convert "${filename}.png" -units PixelsPerInch -density $dpi "${filename}.png"
+    echo "DPI set to $dpi for ${filename}.png"
+fi
