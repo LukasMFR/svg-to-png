@@ -1,20 +1,20 @@
 #!/bin/bash
 
 # Default values for parameters
-default_width=3200
+default_height=3200
 set_dpi=false
 dpi=600
 
 # Function to display help menu
 show_help() {
-    echo "Usage: $0 -f FILENAME [-w WIDTH] [--set-dpi]"
+    echo "Usage: $0 -f FILENAME [-h HEIGHT] [--set-dpi]"
     echo ""
     echo "Convert SVG to PNG using rsvg-convert."
     echo ""
-    echo "   -h, --help           Display this help menu and exit"
-    echo "   -f, --file FILENAME  Specify the SVG file to convert"
-    echo "   -w, --width WIDTH    Optional: Specify the width (default is $default_width)"
-    echo "   --set-dpi            Optional: Set the DPI to 600 in the PNG file"
+    echo "   -h, --help            Display this help menu and exit"
+    echo "   -f, --file FILENAME   Specify the SVG file to convert"
+    echo "   -h, --height HEIGHT   Optional: Specify the height (default is $default_height)"
+    echo "   --set-dpi             Optional: Set the DPI to 600 in the PNG file"
     echo ""
 }
 
@@ -30,8 +30,8 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
-        -w|--width)
-            width="$2"
+        -h|--height)
+            height="$2"
             shift # past argument
             shift # past value
             ;;
@@ -59,13 +59,13 @@ if [ ! -f "${filename}.svg" ]; then
     exit 1
 fi
 
-# Use default width if not specified
-if [ -z "$width" ]; then
-    width=$default_width
+# Use default height if not specified
+if [ -z "$height" ]; then
+    height=$default_height
 fi
 
-# Convert SVG to PNG using rsvg-convert with the specified width
-rsvg-convert -w "$width" "${filename}.svg" > "${filename}.png"
+# Convert SVG to PNG using rsvg-convert with the specified height
+rsvg-convert -h "$height" "${filename}.svg" > "${filename}.png"
 echo "SVG conversion complete: ${filename}.png"
 
 # Optionally set the DPI using ImageMagick
