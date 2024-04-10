@@ -1,21 +1,63 @@
 #!/bin/bash
 
-# Default height
-default_height=3200
+# Default values for parameters
+default_width=3200
 
-# Check if at least one argument is provided
-if [ "$#" -lt 1 ]; then
-    echo "Usage: $0 filename.svg [height]"
+# Function to display help menu
+show_help() {
+echo "Usage: $0 -f FILENAME [-w WIDTH]"
+echo ""
+echo "Convert SVG to PNG using rsvg-convert."
+echo ""
+echo "   -h, --help           Display this help menu and exit"
+echo "   -f, --file FILENAME  Specify the SVG file to convert"
+echo "   -w, --width WIDTH    Optional: Specify the width (default is 3200)"
+echo ""
+}
+
+# Parse command-line options
+while [[ $# -gt 0 ]]; do
+case $1 in
+    -h|--help)
+        show_help
+        exit 0
+        ;;
+    -f|--file)
+        filename="${2%.*}"
+        shift # past argument
+        shift # past value
+        ;;
+    -w|--width)
+        width="$2"
+        shift # past argument
+        shift # past value
+        ;;
+    *)    # unknown option
+        show_help >&2
+        exit 1
+        ;;
+esac
+done
+
+# Check required file parameter
+if [ -z "${filename}" ]; then
+    echo "Error: No file specified."
+    show_help >&2
     exit 1
 fi
 
-# Set the filename and height
-filename="${1%.*}"
-height=${2:-$default_height}
+# Check if the file exists
+if [ ! -f "${filename}.svg" ]; then
+    echo "Error: File ${filename}.svg not found."
+    exit 1
+fi
 
-# Convert SVG to PNG using rsvg-convert with the specified height
-# and then set the DPI to 600 using ImageMagick
-rsvg-convert -h "$height" "$1" > "${filename}.png" && \
-convert "${filename}.png" -units PixelsPerInch -density 600 "${filename}.png"
+# Use default width if not specified
+if [ -z "$width" ]; then
+    width=$default_width
+fi
+
+# Convert SVG to PNG using rsvg-convert with the specified width
+rsvg-convert -w "$width" "${filename}.svg" > "${filename}.png"
 
 echo "Conversion complete: ${filename}.png"
