@@ -1,16 +1,21 @@
 #!/bin/bash
 
-# Check if an argument is provided
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 filename.svg"
+# Default height
+default_height=3200
+
+# Check if at least one argument is provided
+if [ "$#" -lt 1 ]; then
+    echo "Usage: $0 filename.svg [height]"
     exit 1
 fi
 
-# Extract the filename without the extension
+# Set the filename and height
 filename="${1%.*}"
+height=${2:-$default_height}
 
-# Convert SVG to PNG using rsvg-convert with a height of 3200 and set DPI to 600 using ImageMagick
-rsvg-convert -h 3200 "$1" > "${filename}.png" && \
+# Convert SVG to PNG using rsvg-convert with the specified height
+# and then set the DPI to 600 using ImageMagick
+rsvg-convert -h "$height" "$1" > "${filename}.png" && \
 convert "${filename}.png" -units PixelsPerInch -density 600 "${filename}.png"
 
 echo "Conversion complete: ${filename}.png"
