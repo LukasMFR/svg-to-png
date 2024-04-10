@@ -69,7 +69,7 @@ rsvg-convert -w "$width" "${filename}.svg" > "${filename}.png"
 echo "SVG conversion complete: ${filename}.png"
 
 # Optionally set the DPI using ImageMagick
-if $set_dpi; then
+if [ "$set_dpi" = true ]; then
     convert "${filename}.png" -units PixelsPerInch -density $dpi "${filename}.png"
     echo "DPI set to $dpi for ${filename}.png"
 fi
