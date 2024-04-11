@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Script version
+version="3.0.1"
+
 # Default values for parameters
 default_height=3200
 set_dpi=false
@@ -9,12 +12,13 @@ dpi=600
 show_help() {
     echo "Usage: $0 -f FILENAME [-h HEIGHT] [--set-dpi]"
     echo ""
-    echo "Convert SVG to PNG using rsvg-convert."
+    echo "Convert SVG to PNG using rsvg-convert. Version $version"
     echo ""
     echo "   -h, --help            Display this help menu and exit"
     echo "   -f, --file FILENAME   Specify the SVG file to convert"
     echo "   -h, --height HEIGHT   Optional: Specify the height (default is $default_height)"
     echo "   --set-dpi             Optional: Set the DPI to 600 in the PNG file"
+    echo "   -v, --version         Display script version and exit"
     echo ""
 }
 
@@ -38,6 +42,10 @@ while [[ $# -gt 0 ]]; do
         --set-dpi)
             set_dpi=true
             shift # past argument
+            ;;
+        -v|--version)
+            echo "Version $version"
+            exit 0
             ;;
         *)    # unknown option
             show_help >&2
