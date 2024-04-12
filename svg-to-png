@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script version
-version="3.0.1"
+version="3.1"
 
 # Default values for parameters
 default_height=3200
@@ -10,13 +10,14 @@ dpi=600
 
 # Function to display help menu
 show_help() {
-    echo "Usage: $0 -f FILENAME [-h HEIGHT] [--set-dpi]"
+    echo "Usage: $0 -f FILENAME [-H HEIGHT] [-w WIDTH] [--set-dpi]"
     echo ""
     echo "Convert SVG to PNG using rsvg-convert. Version $version"
     echo ""
     echo "   -h, --help            Display this help menu and exit"
     echo "   -f, --file FILENAME   Specify the SVG file to convert"
-    echo "   -h, --height HEIGHT   Optional: Specify the height (default is $default_height)"
+    echo "   -H, --height HEIGHT   Optional: Specify the height"
+    echo "   -w, --width WIDTH     Optional: Specify the width"
     echo "   --set-dpi             Optional: Set the DPI to 600 in the PNG file"
     echo "   -v, --version         Display script version and exit"
     echo ""
@@ -34,8 +35,13 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
-        -h|--height)
+        -H|--height)
             height="$2"
+            shift # past argument
+            shift # past value
+            ;;
+        -w|--width)
+            width="$2"
             shift # past argument
             shift # past value
             ;;
@@ -67,13 +73,20 @@ if [ ! -f "${filename}.svg" ]; then
     exit 1
 fi
 
-# Use default height if not specified
-if [ -z "$height" ]; then
-    height=$default_height
+# Prepare the conversion command based on the options provided
+convert_command="rsvg-convert"
+if [ ! -z "$height" ]; then
+    convert_command+=" -h \"$height\""
+elif [ -z "$width" ]; then
+    convert_command+=" -h \"$default_height\""
 fi
 
-# Convert SVG to PNG using rsvg-convert with the specified height
-rsvg-convert -h "$height" "${filename}.svg" > "${filename}.png"
+if [ ! -z "$width" ]; then
+    convert_command+=" -w \"$width\""
+fi
+
+convert_command+=" \"${filename}.svg\" > \"${filename}.png\""
+eval $convert_command
 echo "SVG conversion complete: ${filename}.png"
 
 # Optionally set the DPI using ImageMagick
