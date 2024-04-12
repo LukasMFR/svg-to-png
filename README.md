@@ -45,7 +45,8 @@ svg-to-png --file <filename>.svg
 
 - `-h, --help`: Display the help menu and exit.
 - `-f, --file FILENAME`: Specify the SVG file to convert.
-- `-H, --height HEIGHT`: Optional. Specify the height of the output image in pixels (default is 3200).
+- `-H, --height HEIGHT`: Optional. Specify the height of the output image in pixels (default is 3200 if no width is specified).
+- `-w, --width WIDTH`: Optional. Specify the width of the output image in pixels. If specified, height will adjust automatically to maintain aspect ratio unless also specified.
 - `--set-dpi`: Optional. Append this flag to set the DPI to 600 in the PNG file's metadata using ImageMagick.
 - `-v, --version`: Display the script version and exit.
 
@@ -61,6 +62,18 @@ Convert an SVG file to PNG with a specified height:
 
 ```sh
 svg-to-png --file image.svg --height 600
+```
+
+Convert an SVG file to PNG with a specified width (height will adjust automatically):
+
+```sh
+svg-to-png --file image.svg --width 800
+```
+
+Convert an SVG file to PNG with specified width and height:
+
+```sh
+svg-to-png --file image.svg --width 800 --height 600
 ```
 
 Convert an SVG file to PNG and set the DPI to 600:
